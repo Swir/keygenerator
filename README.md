@@ -2,33 +2,43 @@
 
 # 🔑 Pattern Code Generator
 
-**GUI generator for pattern-based random codes**  
-**Generator kodów losowych opartych na wzorcach**
+### Desktop Generator for Random Codes Based on Custom Templates
+
+**Python • Tkinter • JSON Patterns • Similarity Score • Batch Generation**
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
-![GUI](https://img.shields.io/badge/GUI-Tkinter-2ea44f)
-![Storage](https://img.shields.io/badge/Patterns-JSON-555)
-![Author](https://img.shields.io/badge/Author-Swir-ff4fa3)
+![Tkinter](https://img.shields.io/badge/GUI-Tkinter-2ea44f)
+![JSON](https://img.shields.io/badge/Patterns-JSON-111111)
+![Mode](https://img.shields.io/badge/Mode-Random%20Template%20Generator-ff9800)
 
 </div>
 
 ---
 
-## 🇵🇱 Polski
+## 🚀 About
 
-Pattern Code Generator to aplikacja desktopowa, która generuje serie kodów o strukturze zbliżonej do wybranego wzorca. Program pozwala zapisywać własne wzorce w pliku `patterns.json`, generować wiele wariantów i porównywać ich podobieństwo do wzorca bazowego.
+**Pattern Code Generator** is a Python desktop utility for creating random strings that follow the structure of a selected template. Save reusable patterns in JSON, generate batches of codes, compare them with the base template and copy the results from a lightweight GUI.
 
-### ✨ Funkcje
-- wybór gotowego wzorca
-- dodawanie własnych wzorców
-- trwały zapis wzorców w JSON
-- generowanie 10 kodów jednocześnie
-- ocena podobieństwa do wzorca
-- wyróżnianie najlepszego wyniku
-- kopiowanie wygenerowanych kodów
-- generowanie w osobnym wątku z paskiem postępu
+It is designed for users searching for a **random code generator**, **pattern-based string generator**, **Python serial format generator**, **Tkinter code generator** or a test-data utility for producing template-shaped values.
 
-### 🚀 Uruchomienie
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🧩 Pattern selection | Use predefined templates |
+| ➕ Custom patterns | Add your own formats |
+| 💾 JSON storage | Keep patterns between sessions |
+| 🔟 Batch generation | Generate multiple codes at once |
+| 📊 Similarity score | Compare generated values to a base pattern |
+| 🏆 Best match | Highlight the closest generated result |
+| 📋 Clipboard | Copy generated values quickly |
+| 🧵 Background thread | Generate without blocking the interface |
+
+---
+
+## 📦 Installation
 
 ```bash
 git clone https://github.com/Swir/keygenerator.git
@@ -36,35 +46,28 @@ cd keygenerator
 python generator.py
 ```
 
-> Program generuje losowe ciągi znaków zgodne z formatem wzorca. Nie generuje ani nie odzyskuje prawdziwych kluczy licencyjnych do zewnętrznego oprogramowania.
+---
+
+## ⚠️ What This Tool Is — and Is Not
+
+The application generates random strings that follow a template. It does **not** create, recover or validate genuine commercial software license keys, activation codes, access tokens or credentials.
 
 ---
 
-## 🇬🇧 English
+## 🔍 Discoverability
 
-Pattern Code Generator is a desktop application that creates batches of random codes shaped like a selected template. Custom patterns can be stored in `patterns.json`, reused later and compared against generated variants using a similarity score.
-
-### ✨ Features
-- select predefined patterns
-- add custom patterns
-- persistent JSON pattern storage
-- generate 10 codes at once
-- similarity scoring
-- highlight the closest match
-- copy generated codes
-- threaded generation with progress indicator
-
-### 🚀 Run
-
-```bash
-git clone https://github.com/Swir/keygenerator.git
-cd keygenerator
-python generator.py
-```
-
-> The application generates random strings that follow a template format. It does not create or recover real license keys for third-party software.
+`random code generator python` • `pattern string generator` • `template code generator` • `tkinter random generator` • `test data generator python` • `serial format generator` • `json pattern generator`
 
 ---
 
-## 👤 Author / Autor
-Developed by **Swir**.
+## 👨‍💻 Author
+
+Developed by **Swir** — [@Swir](https://github.com/Swir)
+
+<div align="center">
+
+### 🔑 Define the pattern • Generate the variations • Copy the result
+
+⭐ **Star the repository if it helps your test-data workflow!**
+
+</div>
