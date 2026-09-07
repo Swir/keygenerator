@@ -1,46 +1,70 @@
-# Generator Kodów / Code Generator
+<div align="center">
 
-## Opis / Description
+# 🔑 Pattern Code Generator
 
-### 🇵🇱 Wersja polska
-Generator Kodów to aplikacja GUI stworzona w Pythonie, która generuje unikalne kody o strukturze maksymalnie zbliżonej do wybranego wzorca. Program pozwala użytkownikowi na:
-- Wybór lub dodanie wzorca kodu.
-- Generowanie 10 kodów jednocześnie, zachowujących możliwie największe podobieństwo do wzorca.
-- Kopiowanie poszczególnych kodów do schowka.
-- Oznaczanie kodu najbardziej zbliżonego do wzorca kolorem zielonym.
+**GUI generator for pattern-based random codes**  
+**Generator kodów losowych opartych na wzorcach**
 
-Program jest szczególnie przydatny do generowania kodów lub kluczy, które muszą spełniać określony wzorzec. Dzięki wbudowanemu algorytmowi każdy kod jest obliczany, aby jak najwierniej odzwierciedlać wzorzec z dodanym elementem losowości, co zapewnia unikalność każdego kodu.
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
+![GUI](https://img.shields.io/badge/GUI-Tkinter-2ea44f)
+![Storage](https://img.shields.io/badge/Patterns-JSON-555)
+![Author](https://img.shields.io/badge/Author-Swir-ff4fa3)
 
-### 🇬🇧 English Version
-The Code Generator is a Python-based GUI application that generates unique codes that closely match a selected pattern. The program allows users to:
-- Choose or add a code pattern.
-- Generate 10 codes simultaneously that maintain a high level of similarity to the pattern.
-- Copy individual codes to the clipboard.
-- Highlight the code most similar to the pattern in green.
+</div>
 
-The application is especially useful for generating codes or keys that must meet a specified format. Thanks to the built-in algorithm, each code is calculated to closely match the pattern, with a slight element of randomness to ensure each code is unique.
+---
 
-## Funkcjonalności / Features
+## 🇵🇱 Polski
 
-### 🇵🇱 Wersja polska
-- **Wybór wzorca kodu**: Możliwość wyboru jednego z predefiniowanych wzorców lub dodanie własnego.
-- **Generowanie kodów**: Program generuje 10 kodów na podstawie wybranego wzorca i wyświetla je w formie listy.
-- **Oznaczenie najlepszego dopasowania**: Kod najbardziej zbliżony do wzorca jest oznaczony kolorem zielonym, a jego precyzja wyświetlana jest w procentach.
-- **Kopiowanie kodów**: Każdy kod można łatwo skopiować do schowka, klikając przycisk „Kopiuj” obok kodu.
+Pattern Code Generator to aplikacja desktopowa, która generuje serie kodów o strukturze zbliżonej do wybranego wzorca. Program pozwala zapisywać własne wzorce w pliku `patterns.json`, generować wiele wariantów i porównywać ich podobieństwo do wzorca bazowego.
 
-### 🇬🇧 English Version
-- **Pattern Selection**: Choose from predefined patterns or add a custom one.
-- **Code Generation**: The program generates 10 codes based on the selected pattern and displays them as a list.
-- **Highlight Best Match**: The code most similar to the pattern is highlighted in green, with its similarity displayed as a percentage.
-- **Copy Codes**: Each code can be easily copied to the clipboard by clicking the “Copy” button next to it.
+### ✨ Funkcje
+- wybór gotowego wzorca
+- dodawanie własnych wzorców
+- trwały zapis wzorców w JSON
+- generowanie 10 kodów jednocześnie
+- ocena podobieństwa do wzorca
+- wyróżnianie najlepszego wyniku
+- kopiowanie wygenerowanych kodów
+- generowanie w osobnym wątku z paskiem postępu
 
-## Wymagania systemowe / System Requirements
+### 🚀 Uruchomienie
 
-- Python 3.x
-- Tkinter (zwykle dostępny jako część instalacji Pythona)
+```bash
+git clone https://github.com/Swir/keygenerator.git
+cd keygenerator
+python generator.py
+```
 
-## Instalacja i uruchomienie / Installation and Running
+> Program generuje losowe ciągi znaków zgodne z formatem wzorca. Nie generuje ani nie odzyskuje prawdziwych kluczy licencyjnych do zewnętrznego oprogramowania.
 
-1. Sklonuj repozytorium:
-   ```bash
-   git clone https://github.com/swir/keygenerator.git
+---
+
+## 🇬🇧 English
+
+Pattern Code Generator is a desktop application that creates batches of random codes shaped like a selected template. Custom patterns can be stored in `patterns.json`, reused later and compared against generated variants using a similarity score.
+
+### ✨ Features
+- select predefined patterns
+- add custom patterns
+- persistent JSON pattern storage
+- generate 10 codes at once
+- similarity scoring
+- highlight the closest match
+- copy generated codes
+- threaded generation with progress indicator
+
+### 🚀 Run
+
+```bash
+git clone https://github.com/Swir/keygenerator.git
+cd keygenerator
+python generator.py
+```
+
+> The application generates random strings that follow a template format. It does not create or recover real license keys for third-party software.
+
+---
+
+## 👤 Author / Autor
+Developed by **Swir**.
