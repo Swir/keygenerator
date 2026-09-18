@@ -1,44 +1,74 @@
+<!-- SWIR-README-STANDARD:v2 -->
+
 <div align="center">
 
-# 🔑 Pattern Code Generator
+<img width="100%" src="assets/readme/hero.svg" alt="Pattern Code Generator — desktop random string generator based on custom templates" />
 
-### Desktop Generator for Random Codes Based on Custom Templates
+<br>
 
-**Python • Tkinter • JSON Patterns • Similarity Score • Batch Generation**
+![Platform](https://img.shields.io/badge/Windows-Desktop-02050A?style=for-the-badge&logo=windows11&logoColor=62E5FF)
+![Python](https://img.shields.io/badge/Python-Tkinter-02050A?style=for-the-badge&logo=python&logoColor=62E5FF)
+![Release](https://img.shields.io/badge/Release-v1.0.0-02050A?style=for-the-badge&logo=github&logoColor=62E5FF)
+![Purpose](https://img.shields.io/badge/Purpose-Synthetic%20Codes-02050A?style=for-the-badge&logo=databricks&logoColor=62E5FF)
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
-![Tkinter](https://img.shields.io/badge/GUI-Tkinter-2ea44f)
-![JSON](https://img.shields.io/badge/Patterns-JSON-111111)
-![Mode](https://img.shields.io/badge/Mode-Random%20Template%20Generator-ff9800)
+[![Author](https://img.shields.io/badge/Author-Swir-0088FF?style=flat-square&logo=github)](https://github.com/Swir)
+[![Stars](https://img.shields.io/github/stars/Swir/keygenerator?style=flat-square&color=0088FF)](https://github.com/Swir/keygenerator/stargazers)
+
+[**Highlights**](#-highlights) · [**Quick Start**](#-quick-start) · [**Usage**](#-usage) · [**Releases**](#-releases)
 
 </div>
 
----
+<p align="center">
+  <img width="100%" src="assets/readme/progress-card.svg" alt="Pattern Code Generator product roadmap progress — N/A because no canonical measurable roadmap exists" />
+</p>
 
-## 🚀 About
+**Product roadmap progress:** N/A — this repository does not contain a canonical checklist or weighted roadmap from which software completion can be reproduced.
 
-**Pattern Code Generator** is a Python desktop utility for creating random strings that follow the structure of a selected template. Save reusable patterns in JSON, generate batches of codes, compare them with the base template and copy the results from a lightweight GUI.
+<img width="100%" src="https://raw.githubusercontent.com/Swir/Swir/main/assets/power-divider-v4.svg" alt="SWIR electric divider" />
 
-It is designed for users searching for a **random code generator**, **pattern-based string generator**, **Python serial format generator**, **Tkinter code generator** or a test-data utility for producing template-shaped values.
+## 📍 Project Status
 
----
-
-## ✨ Features
-
-| Feature | Description |
+| Item | Status |
 |---|---|
-| 🧩 Pattern selection | Use predefined templates |
-| ➕ Custom patterns | Add your own formats |
-| 💾 JSON storage | Keep patterns between sessions |
-| 🔟 Batch generation | Generate multiple codes at once |
-| 📊 Similarity score | Compare generated values to a base pattern |
-| 🏆 Best match | Highlight the closest generated result |
-| 📋 Clipboard | Copy generated values quickly |
-| 🧵 Background thread | Generate without blocking the interface |
+| Current stage | Stable small desktop utility |
+| Platform | Windows release; Python/Tk source |
+| Latest public release | [v1.0.0](https://github.com/Swir/keygenerator/releases/tag/v1.0.0) |
+| Main purpose | Generate synthetic strings that preserve a selected template shape |
+| Product roadmap | No canonical measurable roadmap |
 
----
+## 🚀 Overview
 
-## 📦 Installation
+**Pattern Code Generator** is a lightweight Tkinter desktop utility for producing synthetic strings based on reusable templates. Alphabetic and numeric characters are varied while separators and overall format are preserved. Users can save custom patterns to JSON, generate batches of ten variants, compare them with the source template and copy individual results.
+
+The repository name is historical. The application is a **template-shaped random/test-data generator**; it does not create, recover, validate or activate genuine commercial software licenses, access tokens, credentials or other authorization secrets.
+
+<div align="center">
+<img src="assets/app_icon.svg" alt="Pattern Code Generator project icon" width="112" height="112" />
+</div>
+
+## ✨ Highlights
+
+| Feature | What it does |
+|---|---|
+| 🧩 Template selection | Uses saved string formats as generation patterns. |
+| ➕ Custom patterns | Adds user-defined patterns and stores them in `patterns.json`. |
+| 🔟 Batch generation | Produces ten variants per run in the current GUI. |
+| 📊 Similarity score | Shows positional similarity between each generated value and the chosen template. |
+| 🏆 Best match | Highlights the generated value with the highest similarity in the batch. |
+| 📋 Clipboard | Copies a selected synthetic value directly from the GUI. |
+| 🧵 Background generation | Runs generation in a worker thread so the button action does not block the UI loop. |
+
+## ⚙️ Quick Start
+
+### Recommended — Windows release
+
+Download the verified public release:
+
+[**Pattern Code Generator v1.0.0 →**](https://github.com/Swir/keygenerator/releases/tag/v1.0.0)
+
+The release provides `Key-Generator.exe`, a Windows x64 ZIP and a SHA-256 checksum file.
+
+### From source
 
 ```bash
 git clone https://github.com/Swir/keygenerator.git
@@ -46,28 +76,68 @@ cd keygenerator
 python generator.py
 ```
 
----
+The source uses Python's standard-library modules plus Tkinter. Your Python installation must include Tk support.
 
-## ⚠️ What This Tool Is — and Is Not
+## 📋 Requirements / Compatibility
 
-The application generates random strings that follow a template. It does **not** create, recover or validate genuine commercial software license keys, activation codes, access tokens or credentials.
+- Python 3 with Tkinter when running from source.
+- Windows x64 for the published packaged executable/ZIP.
+- Write access to the working directory if you want custom patterns persisted in `patterns.json`.
 
----
+## 🎮 Usage
 
-## 🔍 Discoverability
+1. Select an existing pattern or type a new one.
+2. Add the custom pattern if you want it saved.
+3. Click **Generate codes**.
+4. Review the ten generated variants and their similarity values.
+5. Copy any result with its **Copy** button.
 
-`random code generator python` • `pattern string generator` • `template code generator` • `tkinter random generator` • `test data generator python` • `serial format generator` • `json pattern generator`
+The generator preserves non-alphanumeric separators and varies nearby alphabetic/numeric characters around the source pattern. Similarity is a simple positional comparison; it is not a validity, license or cryptographic score.
 
----
+## 🧠 Technology / Architecture
 
-## 👨‍💻 Author
+| Layer | Technology / role |
+|---|---|
+| GUI | Tkinter / ttk |
+| Generation | Python `random` with template-character transforms |
+| Pattern storage | Local JSON file (`patterns.json`) |
+| Packaging | GitHub Actions Windows release workflow |
 
-Developed by **Swir** — [@Swir](https://github.com/Swir)
+## 🗺️ Roadmap
+
+<p align="center">
+  <img width="100%" src="assets/readme/progress-mini.svg" alt="Pattern Code Generator roadmap progress — N/A because no canonical checklist exists" />
+</p>
+
+No authoritative product roadmap is currently present. The progress graphic therefore reports **N/A** instead of treating the v1.0.0 release or file count as software completion.
+
+## 📦 Releases
+
+Latest verified public release:
+
+- **v1.0.0** — Windows executable, portable ZIP and SHA-256 checksum.
+
+[**Browse GitHub Releases →**](https://github.com/Swir/keygenerator/releases)
+
+## ⚠️ Limitations / Responsible Use
+
+- Generated strings are synthetic test data derived from user-selected patterns.
+- A high similarity score only means more characters match the template in the same positions.
+- The tool does not query activation servers, reverse engineer licensing systems, validate credentials or bypass access controls.
+- Do not present generated strings as genuine licenses, credentials or authorization secrets.
+
+## 🔎 Search Keywords
+
+`random code generator python` • `pattern string generator` • `template based test data` • `Tkinter random generator` • `synthetic serial format generator` • `JSON pattern generator` • `desktop code generator` • `batch random strings` • `template similarity score` • `Windows Python utility`
+
+<img width="100%" src="https://raw.githubusercontent.com/Swir/Swir/main/assets/power-divider-v4.svg" alt="SWIR electric divider" />
 
 <div align="center">
 
-### 🔑 Define the pattern • Generate the variations • Copy the result
+### `DEFINE • GENERATE • COMPARE • COPY`
 
-⭐ **Star the repository if it helps your test-data workflow!**
+⭐ **If this project is useful, consider leaving a star.**
+
+[**← SWIR profile**](https://github.com/Swir) · [**All projects →**](https://github.com/Swir?tab=repositories)
 
 </div>
