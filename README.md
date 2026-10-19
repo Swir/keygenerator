@@ -18,6 +18,12 @@
 
 </div>
 
+## 📸 Screenshot
+
+![keygenerator application screenshot](docs/screenshots/application.jpg)
+
+Initial code generator window on Windows.
+
 <p align="center">
   <img width="100%" src="assets/readme/progress-card.svg" alt="Pattern Code Generator product roadmap progress — N/A because no canonical measurable roadmap exists" />
 </p>
