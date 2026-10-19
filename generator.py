@@ -1,179 +1,169 @@
-import random
-import tkinter as tk
-from tkinter import StringVar, ttk, messagebox
+"""Desktop synthetic-code generator; generation stays on the Tk main thread."""
 import json
-import os
-import threading
+from pathlib import Path
+import sys
+import tempfile
+import tkinter as tk
+from tkinter import ttk
+from pattern_core import DEFAULT_PATTERNS, PatternStore, default_pattern_path, generate_batch, validate_pattern
+
+VERSION = "1.1.0"
+
 
 class CodeGeneratorApp:
-    def __init__(self, master):
-        self.master = master
-        self.master.attributes('-topmost', True)
-        self.pattern_file = "patterns.json"
-        
-        self.load_patterns()
-        self.build_gui()
-
-    def load_patterns(self):
+    def __init__(self, root, pattern_file=None):
+        self.master = root
+        self.store = PatternStore(pattern_file or default_pattern_path())
+        self.status = tk.StringVar(root)
         try:
-            if os.path.exists(self.pattern_file):
-                with open(self.pattern_file, "r") as file:
-                    content = file.read()
-                    if content.strip():
-                        self.patterns = json.loads(content)
-                        if not self.patterns:
-                            self.set_default_patterns()
-                    else:
-                        self.set_default_patterns()
+            legacy = Path.cwd() / "patterns.json"
+            if pattern_file is None and not self.store.path.exists() and legacy.is_file():
+                self.patterns = PatternStore(legacy).load()
+                self.status.set("Odczytano stare wzorce. Kolejny zapis trafi do profilu użytkownika; oryginał pozostanie bez zmian.")
             else:
-                self.set_default_patterns()
-        except (IOError, json.decoder.JSONDecodeError) as e:
-            messagebox.showerror("Błąd", f"Nie udało się załadować wzorców: {e}")
-            self.set_default_patterns()
+                self.patterns = self.store.load()
+        except (OSError, ValueError) as error:
+            self.patterns = DEFAULT_PATTERNS.copy()
+            self.status.set(f"Nie odczytano wzorców: {error} Przy zapisie uszkodzony plik otrzyma kopię zapasową.")
+        self.patterns = self.patterns or DEFAULT_PATTERNS.copy()
+        root.title(f"Generator kodów testowych {VERSION} — Swir")
+        root.minsize(590, 410)
+        root.columnconfigure(0, weight=1)
+        root.rowconfigure(0, weight=1)
+        frame = ttk.Frame(root, padding=16)
+        frame.grid(sticky="nsew")
+        frame.columnconfigure(1, weight=1)
+        frame.rowconfigure(4, weight=1)
+        self.pattern_choice = tk.StringVar(root, self.patterns[0])
+        self.new_pattern = tk.StringVar(root)
+        ttk.Label(frame, text="Wybierz wzór:").grid(row=0, column=0, sticky="w", padx=(0, 10), pady=5)
+        self.pattern_dropdown = ttk.Combobox(frame, textvariable=self.pattern_choice, values=self.patterns, state="readonly")
+        self.pattern_dropdown.grid(row=0, column=1, columnspan=2, sticky="ew", pady=5)
+        ttk.Label(frame, text="Nowy wzór:").grid(row=1, column=0, sticky="w", pady=5)
+        self.new_pattern_entry = ttk.Entry(frame, textvariable=self.new_pattern)
+        self.new_pattern_entry.grid(row=1, column=1, sticky="ew", pady=5)
+        self.add_button = ttk.Button(frame, text="Dodaj", command=self.add_new_pattern)
+        self.add_button.grid(row=1, column=2, padx=(8, 0))
+        self.generate_button = ttk.Button(frame, text="Generuj 10 kodów", command=self.start_code_generation)
+        self.generate_button.grid(row=2, column=0, columnspan=3, pady=10)
+        ttk.Label(frame, textvariable=self.status, wraplength=570).grid(row=3, column=0, columnspan=3, sticky="ew", pady=(0, 8))
+        results = ttk.Frame(frame)
+        results.grid(row=4, column=0, columnspan=3, sticky="nsew")
+        results.rowconfigure(0, weight=1)
+        results.columnconfigure(0, weight=1)
+        self.codes = ttk.Treeview(results, columns=("code", "similarity"), show="headings", height=10, selectmode="browse")
+        self.codes.heading("code", text="Kod testowy")
+        self.codes.heading("similarity", text="Podobieństwo")
+        self.codes.column("code", width=400, minwidth=200)
+        self.codes.column("similarity", width=100, minwidth=90, stretch=False)
+        self.codes.grid(row=0, column=0, sticky="nsew")
+        scroll = ttk.Scrollbar(results, orient="vertical", command=self.codes.yview)
+        scroll.grid(row=0, column=1, sticky="ns")
+        horizontal = ttk.Scrollbar(results, orient="horizontal", command=self.codes.xview)
+        horizontal.grid(row=1, column=0, sticky="ew")
+        self.codes.configure(yscrollcommand=scroll.set, xscrollcommand=horizontal.set)
+        self.codes.tag_configure("best", foreground="#16803c")
+        ttk.Button(frame, text="Kopiuj wybrany kod", command=self.copy_selected).grid(row=5, column=0, columnspan=3, pady=(10, 0))
+        self.new_pattern_entry.bind("<Return>", lambda _event: self.add_new_pattern())
 
-    def set_default_patterns(self):
-        self.patterns = [
-            "RDCT-X9GR-XHHS-99UN-HKR9",
-            "UADX-XM64-FC4R-EGBR-7HTX",
-        ]
-
-    def save_patterns(self):
+    def is_valid_pattern(self, pattern):
         try:
-            with open(self.pattern_file, "w") as file:
-                json.dump(self.patterns, file)
-        except IOError as e:
-            messagebox.showerror("Błąd", f"Nie udało się zapisać wzorców: {e}")
-
-    def build_gui(self):
-        mainframe = ttk.Frame(self.master, padding="10")
-        mainframe.grid(column=0, row=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        
-        self.master.attributes('-alpha', 0.95)
-
-        self.code = StringVar()
-        self.pattern_choice = StringVar()
-
-        ttk.Label(mainframe, text="Wybierz wzór:").grid(column=1, row=1, sticky=tk.W)
-        self.pattern_dropdown = ttk.Combobox(mainframe, textvariable=self.pattern_choice, values=self.patterns, state="readonly")
-        self.pattern_dropdown.grid(column=2, row=1, sticky=(tk.W, tk.E))
-        if self.patterns:
-            self.pattern_dropdown.set(self.patterns[0])
-
-        ttk.Label(mainframe, text="Dodaj nowy wzór:").grid(column=1, row=2, sticky=tk.W)
-        self.new_pattern_entry = ttk.Entry(mainframe)
-        self.new_pattern_entry.grid(column=2, row=2, sticky=(tk.W, tk.E))
-        ttk.Button(mainframe, text="Dodaj", command=self.add_new_pattern).grid(column=3, row=2)
-
-        # Ramka do wyświetlania kodów
-        self.codes_frame = tk.Frame(mainframe, bg="#f0f0f0", bd=2, relief="groove")
-        self.codes_frame.grid(column=1, row=3, columnspan=3, sticky=(tk.W, tk.E), pady=10)
-        
-        ttk.Button(mainframe, text="Generuj kody", command=self.start_code_generation).grid(column=2, row=4, pady=10)
-
-        self.progress = ttk.Progressbar(mainframe, orient="horizontal", length=200, mode="indeterminate")
-        self.progress.grid(column=2, row=5, sticky=(tk.W, tk.E))
+            validate_pattern(pattern)
+            return True
+        except ValueError:
+            return False
 
     def add_new_pattern(self):
-        new_pattern = self.new_pattern_entry.get()
-        if self.is_valid_pattern(new_pattern) and new_pattern not in self.patterns:
-            self.patterns.append(new_pattern)
-            self.pattern_dropdown['values'] = self.patterns
-            self.pattern_dropdown.set(new_pattern)
-            self.new_pattern_entry.delete(0, tk.END)
-            self.save_patterns()
-            messagebox.showinfo("Sukces", "Nowy wzór dodany!")
-        else:
-            messagebox.showerror("Błąd", "Nieprawidłowy wzór lub wzór już istnieje!")
+        pattern = self.new_pattern.get().strip()
+        try:
+            validate_pattern(pattern)
+            if pattern in self.patterns:
+                raise ValueError("Ten wzór już istnieje.")
+            candidate = self.patterns + [pattern]
+            backup = self.store.save(candidate)
+        except (ValueError, OSError) as error:
+            self.status.set(f"Nie zapisano wzoru: {error}")
+            return False
+        self.patterns = candidate
+        self.pattern_dropdown.configure(values=self.patterns)
+        self.pattern_choice.set(pattern)
+        self.new_pattern.set("")
+        self.status.set("Zapisano wzór." + (f" Kopia poprzedniego pliku: {backup.name}" if backup else ""))
+        return True
 
     def start_code_generation(self):
-        if not self.pattern_choice.get():
-            messagebox.showwarning("Ostrzeżenie", "Wybierz wzór przed wygenerowaniem kodów.")
-            return
-        self.progress.start(10)
-        threading.Thread(target=self.generate_multiple_codes).start()
+        try:
+            generated = generate_batch(self.pattern_choice.get())
+        except ValueError as error:
+            self.status.set(str(error))
+            return False
+        best = max(score for _code, score in generated)
+        self.codes.delete(*self.codes.get_children())
+        for code, score in generated:
+            self.codes.insert("", "end", values=(code, f"{score:.0%}"), tags=("best",) if score == best else ())
+        self.codes.selection_set(self.codes.get_children()[0])
+        self.status.set("Wygenerowano 10 kodów testowych. Podobieństwo nie oznacza ważności kodu.")
+        return True
 
-    def generate_multiple_codes(self):
-        pattern = self.pattern_choice.get()
-        generated_codes = []
-        max_similarity = 0
-        best_code = None
+    def copy_selected(self):
+        selected = self.codes.selection()
+        if not selected:
+            self.status.set("Najpierw wybierz wygenerowany kod.")
+            return False
+        code = self.codes.item(selected[0], "values")[0]
+        try:
+            self.master.clipboard_clear()
+            self.master.clipboard_append(code)
+        except tk.TclError:
+            self.status.set("Schowek jest niedostępny. Spróbuj ponownie.")
+            return False
+        self.status.set("Skopiowano kod testowy.")
+        return True
 
-        # Generowanie 10 kodów z oceną precyzji
-        for _ in range(10):
-            code = self.generate_code_with_precision(pattern)
-            similarity = self.calculate_similarity(pattern, code)
 
-            generated_codes.append((code, similarity))
+def self_test(report):
+    root = None
+    result = {"application":"Key-Generator", "version":VERSION, "passed":False}
+    try:
+        report_parent = Path(report).resolve().parent
+        with tempfile.TemporaryDirectory(prefix="pattern-generator-smoke-", dir=report_parent) as directory:
+            if not Path(directory).resolve().is_relative_to(report_parent):
+                raise RuntimeError("Unexpected smoke-test directory")
+            path = Path(directory) / "patterns.json"
+            root = tk.Tk()
+            root.withdraw()
+            app = CodeGeneratorApp(root, path)
+            root.update_idletasks()
+            app.new_pattern.set("Ab9-TEST-012")
+            app.add_button.invoke()
+            assert app.pattern_choice.get() == "Ab9-TEST-012"
+            assert "Ab9-TEST-012" in PatternStore(path).load()
+            app.generate_button.invoke()
+            rows = app.codes.get_children()
+            assert len(rows) == 10
+            assert all(len(app.codes.item(row, "values")[0]) == 12 for row in rows)
+            app.new_pattern.set("---")
+            assert not app.add_new_pattern()
+            root.destroy()
+            root = None
+            result.update(passed=True, checks=["Tk widgets", "add pattern button", "atomic JSON persistence", "ten generated rows", "invalid pattern"])
+    except Exception as error:
+        result["error"] = f"{type(error).__name__}: {error}"
+    finally:
+        if root is not None:
+            root.destroy()
+        Path(report).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    return 0 if result["passed"] else 1
 
-            # Aktualizacja najlepszego kodu na podstawie precyzji
-            if similarity > max_similarity:
-                max_similarity = similarity
-                best_code = code
 
-        self.display_codes(generated_codes, best_code)
-        self.progress.stop()
+def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--self-test":
+        return self_test(sys.argv[2])
+    root = tk.Tk()
+    CodeGeneratorApp(root)
+    root.mainloop()
+    return 0
 
-    def generate_code_with_precision(self, pattern):
-        """Generuje kod, maksymalizując podobieństwo do wzorca z lekkim elementem losowości."""
-        generated_code = ""
-        for char in pattern:
-            if char.isalpha():
-                generated_code += self.precise_letter_with_randomness(char)
-            elif char.isdigit():
-                generated_code += self.precise_digit_with_randomness(char)
-            else:
-                generated_code += char
-        return generated_code
-
-    def precise_letter_with_randomness(self, letter):
-        """Dobiera literę maksymalnie podobną do podanej, z lekkim elementem losowości."""
-        base_ascii = ord(letter.upper())
-        # Dodaj element losowości do najbliższych sąsiednich znaków
-        possible_choices = [chr(base_ascii)]
-        if random.random() < 0.5:  # 50% szans na zmianę znaku
-            possible_choices.append(chr((base_ascii + 1 - 65) % 26 + 65))
-            possible_choices.append(chr((base_ascii - 1 - 65) % 26 + 65))
-        return random.choice(possible_choices) if letter.isupper() else random.choice(possible_choices).lower()
-
-    def precise_digit_with_randomness(self, digit):
-        """Dobiera cyfrę maksymalnie podobną do podanej, z lekkim elementem losowości."""
-        base_ascii = ord(digit)
-        possible_choices = [chr(base_ascii)]
-        if random.random() < 0.5:  # 50% szans na zmianę cyfry
-            possible_choices.append(chr((base_ascii + 1 - 48) % 10 + 48))
-            possible_choices.append(chr((base_ascii - 1 - 48) % 10 + 48))
-        return random.choice(possible_choices)
-
-    def calculate_similarity(self, original, generated):
-        """Oblicza precyzję podobieństwa między wzorcem a wygenerowanym kodem."""
-        similarity = sum(1 for o, g in zip(original, generated) if o == g)
-        return similarity / len(original)
-
-    def display_codes(self, generated_codes, best_code):
-        """Wyświetla wygenerowane kody w interfejsie, podświetlając najlepszy i dodając przyciski do kopiowania."""
-        for widget in self.codes_frame.winfo_children():
-            widget.destroy()
-
-        for code, similarity in generated_codes:
-            # Ramka dla każdego kodu
-            code_frame = tk.Frame(self.codes_frame, bg="#ffffff", padx=5, pady=5, relief="solid", bd=1)
-            code_frame.pack(fill="x", pady=2)
-
-            color = "green" if code == best_code else "black"
-            code_label = tk.Label(code_frame, text=f"{code} (Precyzja: {similarity * 100:.2f}%)", fg=color, font=('Arial', 10))
-            code_label.pack(side="left", padx=(0, 10))
-
-            copy_button = tk.Button(code_frame, text="Kopiuj", command=lambda c=code: self.copy_to_clipboard(c))
-            copy_button.pack(side="right")
-
-    def copy_to_clipboard(self, code):
-        """Kopiuje podany kod do schowka."""
-        self.master.clipboard_clear()
-        self.master.clipboard_append(code)
-        messagebox.showinfo("Schowek", "Kod został skopiowany do schowka!")
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Generator kodów")
-    app = CodeGeneratorApp(root)
-    root.mainloop()
+    raise SystemExit(main())

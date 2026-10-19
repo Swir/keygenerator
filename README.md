@@ -8,7 +8,7 @@
 
 ![Platform](https://img.shields.io/badge/Windows-Desktop-02050A?style=for-the-badge&logo=windows11&logoColor=62E5FF)
 ![Python](https://img.shields.io/badge/Python-Tkinter-02050A?style=for-the-badge&logo=python&logoColor=62E5FF)
-![Release](https://img.shields.io/badge/Release-v1.0.0-02050A?style=for-the-badge&logo=github&logoColor=62E5FF)
+![Release](https://img.shields.io/badge/Source-v1.1.0-02050A?style=for-the-badge&logo=github&logoColor=62E5FF)
 ![Purpose](https://img.shields.io/badge/Purpose-Synthetic%20Codes-02050A?style=for-the-badge&logo=databricks&logoColor=62E5FF)
 
 [![Author](https://img.shields.io/badge/Author-Swir-0088FF?style=flat-square&logo=github)](https://github.com/Swir)
@@ -18,7 +18,7 @@
 
 </div>
 
-## 📸 Screenshot
+## 📸 Screenshot — earlier interface
 
 ![keygenerator application screenshot](docs/screenshots/application.jpg)
 
@@ -38,7 +38,8 @@ Initial code generator window on Windows.
 |---|---|
 | Current stage | Stable small desktop utility |
 | Platform | Windows release; Python/Tk source |
-| Latest public release | [v1.0.0](https://github.com/Swir/keygenerator/releases/tag/v1.0.0) |
+| Current source | 1.1.0 |
+| Windows download | [Latest verified release](https://github.com/Swir/keygenerator/releases/latest) |
 | Main purpose | Generate synthetic strings that preserve a selected template shape |
 | Product roadmap | No canonical measurable roadmap |
 
@@ -57,12 +58,12 @@ The repository name is historical. The application is a **template-shaped random
 | Feature | What it does |
 |---|---|
 | 🧩 Template selection | Uses saved string formats as generation patterns. |
-| ➕ Custom patterns | Adds user-defined patterns and stores them in `patterns.json`. |
+| ➕ Custom patterns | Validates user-defined patterns and saves them atomically in the current user’s application-data folder. |
 | 🔟 Batch generation | Produces ten variants per run in the current GUI. |
 | 📊 Similarity score | Shows positional similarity between each generated value and the chosen template. |
 | 🏆 Best match | Highlights the generated value with the highest similarity in the batch. |
 | 📋 Clipboard | Copies a selected synthetic value directly from the GUI. |
-| 🧵 Background generation | Runs generation in a worker thread so the button action does not block the UI loop. |
+| 🧩 Safe UI updates | Bounded generation of ten short codes stays on the Tk main thread, without background widget access. |
 
 ## ⚙️ Quick Start
 
@@ -70,9 +71,9 @@ The repository name is historical. The application is a **template-shaped random
 
 Download the verified public release:
 
-[**Pattern Code Generator v1.0.0 →**](https://github.com/Swir/keygenerator/releases/tag/v1.0.0)
+[**Latest verified Windows release →**](https://github.com/Swir/keygenerator/releases/latest)
 
-The release provides `Key-Generator.exe`, a Windows x64 ZIP and a SHA-256 checksum file.
+New releases provide `Key-Generator.exe`, a Windows x64 ZIP, `SHA256SUMS.txt`, build provenance and packaged-runtime verification. See [CHANGELOG.md](CHANGELOG.md) for 1.1.0 changes.
 
 ### From source
 
@@ -88,7 +89,8 @@ The source uses Python's standard-library modules plus Tkinter. Your Python inst
 
 - Python 3 with Tkinter when running from source.
 - Windows x64 for the published packaged executable/ZIP.
-- Write access to the working directory if you want custom patterns persisted in `patterns.json`.
+- Write access to `%LOCALAPPDATA%/Swir/PatternCodeGenerator` on Windows for saved patterns.
+- When no user-profile store exists, a legacy `patterns.json` in the working directory can be read. Subsequent saves go to the user profile and leave the original file unchanged.
 
 ## 🎮 Usage
 
@@ -96,7 +98,9 @@ The source uses Python's standard-library modules plus Tkinter. Your Python inst
 2. Add the custom pattern if you want it saved.
 3. Click **Generate codes**.
 4. Review the ten generated variants and their similarity values.
-5. Copy any result with its **Copy** button.
+5. Select a result and choose **Kopiuj wybrany kod** (Copy selected code).
+
+Patterns contain 1–128 printable ASCII characters and at least one letter or digit. Up to 500 patterns are supported. Corrupt JSON is reported and preserved in a uniquely named backup before recovery; a failed save does not replace the previous file.
 
 The generator preserves non-alphanumeric separators and varies nearby alphabetic/numeric characters around the source pattern. Similarity is a simple positional comparison; it is not a validity, license or cryptographic score.
 
@@ -106,7 +110,7 @@ The generator preserves non-alphanumeric separators and varies nearby alphabetic
 |---|---|
 | GUI | Tkinter / ttk |
 | Generation | Python `random` with template-character transforms |
-| Pattern storage | Local JSON file (`patterns.json`) |
+| Pattern storage | Validated JSON, atomic replacement, corrupt-file backup and read-only legacy import |
 | Packaging | GitHub Actions Windows release workflow |
 
 ## 🗺️ Roadmap
@@ -119,9 +123,9 @@ No authoritative product roadmap is currently present. The progress graphic ther
 
 ## 📦 Releases
 
-Latest verified public release:
+Current source: **1.1.0**. Download the [latest verified public release](https://github.com/Swir/keygenerator/releases/latest).
 
-- **v1.0.0** — Windows executable, portable ZIP and SHA-256 checksum.
+Regression tests, frozen application checks and verification of the freshly downloaded draft package gate publication. Public releases are never overwritten.
 
 [**Browse GitHub Releases →**](https://github.com/Swir/keygenerator/releases)
 
@@ -131,6 +135,15 @@ Latest verified public release:
 - A high similarity score only means more characters match the template in the same positions.
 - The tool does not query activation servers, reverse engineer licensing systems, validate credentials or bypass access controls.
 - Do not present generated strings as genuine licenses, credentials or authorization secrets.
+
+## 🧪 Verification
+
+```powershell
+python -m unittest discover -s tests -v
+python generator.py --self-test generator-self-test.json
+```
+
+The self-test uses an isolated temporary pattern store and a hidden window; it exercises Add and Generate without changing user patterns or clipboard contents.
 
 ## 🔎 Search Keywords
 

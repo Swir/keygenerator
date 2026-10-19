@@ -1,0 +1,12 @@
+{
+  "title": "Pattern Code Generator",
+  "package": "Key-Generator",
+  "readme": "README.md",
+  "applications": [
+    {
+      "name": "Key-Generator",
+      "entry": "generator.py"
+    }
+  ],
+  "dependencies": []
+}
